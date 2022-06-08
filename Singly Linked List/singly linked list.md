@@ -376,8 +376,9 @@
   ```
   - Time complexity : O(n), where n is the number of nodes in the Linked List.  
     Similar to the above approaches. Finding the middle is O(n), reversing a list in place is O(n), and then comparing the 2 resulting Linked Lists is also O(n).
-  - Space complexity : O(1). We are changing the next pointers for half of the nodes. This was all memory that had already been allocated, so we are not using any extra memory and therefore it is O(1).
+  - Space complexity : O(1). We are changing the next pointers for half of the nodes. This was all memory that had already been allocated, so we are not using any extra memory and therefore it is O(1).  
 
+### 1.5 Find Middle
 - [876. Middle of the Linked List](https://leetcode.com/problems/middle-of-the-linked-list/)
   > Fast and Slow Pointer  
   > **Notice: 和[234题解法2](#no.234_way2)循环条件不同，此题是：fast != null && fast.next != null; 返回的是后半段开头。**
