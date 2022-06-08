@@ -382,19 +382,21 @@
   > Fast and Slow Pointer  
   > **Notice: 和[234题解法2](#no.234_way2)循环条件不同，此题是：fast != null && fast.next != null; 返回的是后半段开头。**
 
-```java
-class Solution {
-    public ListNode middleNode(ListNode head) {
-        ListNode slow = head;
-        ListNode fast = head;
-        
-        // 后半段的开头
-        while (fast != null && fast.next != null) {
-            slow = slow.next;
-            fast = fast.next.next;
-        }
-        
-        return slow;
-    }
-}
-```
+  ```java
+  class Solution {
+      public ListNode middleNode(ListNode head) {
+          ListNode slow = head;
+          ListNode fast = head;
+
+          // 后半段的开头
+          while (fast != null && fast.next != null) {
+              slow = slow.next;
+              fast = fast.next.next;
+          }
+
+          return slow;
+      }
+  }
+  ```
+  - Time Complexity: O(N), where N is the number of nodes in the given list.
+  - Space Complexity: O(1)), the space used by slow and fast.
