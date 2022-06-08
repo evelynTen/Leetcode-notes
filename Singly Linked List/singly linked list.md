@@ -173,6 +173,38 @@
   - Time complexity : O(n). Because each node in the list is checked exactly once to determine if it is a duplicate or not, the total run time is O(n), where nn is the number of nodes in the list.
   - Space complexity : O(1). No additional space is used.
 
+- [82. Remove Duplicates from Sorted List II](https://leetcode.com/problems/remove-duplicates-from-sorted-list-ii/)
+  > Sentinel Head + Predecessor  
+  > **三个Node: sentinel, prev, curr.**
+
+  ```java
+  class Solution {
+    public ListNode deleteDuplicates(ListNode head) {
+        ListNode sentinel = new ListNode(0, head);
+        ListNode prev = sentinel, curr = head;
+        
+        while (curr != null) {
+            if (curr.next != null && curr.val == curr.next.val) {
+                while (curr.next != null && curr.val == curr.next.val) {
+                    curr = curr.next;
+                }
+                prev.next = curr.next;
+            }
+            else {
+                prev = prev.next;
+            }
+            curr = curr.next;
+        }
+        
+        return sentinel.next;
+    }
+  }
+  ```
+  
+  - Time complexity: O(N) since it's one pass along the input list.
+  - Space complexity: O(1) because we don't allocate any additional data structure.
+
+
 - [203. Remove Linked List Elements](https://leetcode.com/problems/remove-linked-list-elements/)
   > Sentinel Node  
   > Why use: 中间的好删除，两头不好删。  
@@ -213,3 +245,156 @@
     }
   }
   ```
+- [19. Remove Nth Node From End of List](https://leetcode.com/problems/remove-nth-node-from-end-of-list/)
+  > Two pass algorithm  
+  > 1. 算出链表长度。
+  > 2. 删除倒数第n个节点。  
+  > **Notice: length -= n; first = dummy; // 指向前一个节点可直接删除  
+  > 循环条件: length > 0;**
+
+  ```java
+  class Solution {
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        int length = 0;
+        
+        ListNode first = head;
+        while (first != null) {
+            length++;
+            first = first.next;
+        }
+        
+        length -= n;
+        first = dummy; // 指向前一个节点可直接删除
+        while (length > 0) {
+            first = first.next;
+            length--;
+        }
+        first.next = first.next.next;
+        return dummy.next;
+    }
+  }
+  ```
+  - Time complexity : O(L). The algorithm makes two traversal of the list, first to calculate list length L and second to find the (L−n) th node. There are 2L-n operations and time complexity is O(L).
+  - Space complexity : O(1). We only used constant extra space.
+
+### 1.4 Palindrome
+- [234. Palindrome Linked List](https://leetcode.com/problems/palindrome-linked-list/)
+  > Way1: Copy into Array List and then Use Two Pointer Technique
+
+  ```java
+  class Solution {
+    public boolean isPalindrome(ListNode head) {
+        List<Integer> vals = new ArrayList<>();
+        
+        ListNode curr = head;
+        while (curr != null) {
+            vals.add(curr.val);
+            curr = curr.next;
+        }
+        
+        int front = 0;
+        int back = vals.size() - 1;
+        
+        while (front < back) {
+            if (!vals.get(front).equals(vals.get(back))) {
+                return false;
+            }
+            front++;
+            back--;
+        }
+        
+        return true;
+        
+    }
+  }
+  ```
+  - Time complexity : O(n), where n is the number of nodes in the Linked List.  
+    
+    In the first part, we're copying a Linked List into an Array List. Iterating down a Linked List in sequential order is O(n), and each of the n writes to the ArrayList is O(1). Therefore, the overall cost is O(n).  
+    
+    In the second part, we're using the two pointer technique to check whether or not the Array List is a palindrome. Each of the n values in the Array list is accessed once, and a total of O(n/2) comparisons are done. Therefore, the overall cost is O(n). The Python trick (reverse and list comparison as a one liner) is also O(n).  
+    
+    This gives O(2n) = O(n) because we always drop the constants.
+  - Space complexity : O(n), where nn is the number of nodes in the Linked List. We are making an Array List and adding n values to it.
+
+  > <a id="no.234_way2"></a>Way2: Reverse Second Half In-place  
+  > **Notice: 分前后半段循环条件：fast.next != null && fast.next.next != null; 返回的是前半段结尾。**
+
+  ```java
+  class Solution {
+
+    public boolean isPalindrome(ListNode head) {
+
+        if (head == null) return true;
+
+        // Find the end of first half and reverse second half.
+        ListNode firstHalfEnd = endOfFirstHalf(head);
+        ListNode secondHalfStart = reverseList(firstHalfEnd.next);
+
+        // Check whether or not there is a palindrome.
+        ListNode p1 = head;
+        ListNode p2 = secondHalfStart;
+        boolean result = true;
+        while (result && p2 != null) {
+            if (p1.val != p2.val) result = false;
+            p1 = p1.next;
+            p2 = p2.next;
+        }        
+
+        // Restore the list and return the result.
+        firstHalfEnd.next = reverseList(secondHalfStart);
+        return result;
+    }
+
+    // Taken from https://leetcode.com/problems/reverse-linked-list/solution/
+    private ListNode reverseList(ListNode head) {
+        ListNode prev = null;
+        ListNode curr = head;
+        while (curr != null) {
+            ListNode nextTemp = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = nextTemp;
+        }
+        return prev;
+    }
+
+    private ListNode endOfFirstHalf(ListNode head) {
+        ListNode fast = head;
+        ListNode slow = head;
+        
+        // 前半段的结尾
+        while (fast.next != null && fast.next.next != null) {
+            fast = fast.next.next;
+            slow = slow.next;
+        }
+        return slow;
+    }
+  }
+  ```
+  - Time complexity : O(n), where n is the number of nodes in the Linked List.  
+    Similar to the above approaches. Finding the middle is O(n), reversing a list in place is O(n), and then comparing the 2 resulting Linked Lists is also O(n).
+  - Space complexity : O(1). We are changing the next pointers for half of the nodes. This was all memory that had already been allocated, so we are not using any extra memory and therefore it is O(1).
+
+- [876. Middle of the Linked List](https://leetcode.com/problems/middle-of-the-linked-list/)
+  > Fast and Slow Pointer  
+  > **Notice: 和[234题解法2](#no.234_way2)循环条件不同，此题是：fast != null && fast.next != null; 返回的是后半段开头。**
+
+```java
+class Solution {
+    public ListNode middleNode(ListNode head) {
+        ListNode slow = head;
+        ListNode fast = head;
+        
+        // 后半段的开头
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        
+        return slow;
+    }
+}
+```
