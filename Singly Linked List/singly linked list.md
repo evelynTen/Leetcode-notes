@@ -401,3 +401,57 @@
   ```
   - Time Complexity: O(N), where N is the number of nodes in the given list.
   - Space Complexity: O(1)), the space used by slow and fast.
+
+### 1.6 Reorder
+- [143. Reorder List](https://leetcode.com/problems/reorder-list/)
+  > Reverse the Second Part of the List and Merge Two Sorted Lists  
+  > 1. Middle of the Linked List
+  > 2. Reverse Linked List
+  > 3. Merge Two Sorted Lists  
+  > **Notice: 合并时循环条件为：second.next != null，循环截止时，second指向后半段最后一个节点，最终结果最后一个节点为前半段的最后一个节点。**
+
+  ```java
+  class Solution {
+    public void reorderList(ListNode head) {
+        if (head == null) return;
+        
+        // find middle
+        ListNode slow = head;
+        ListNode fast = head;
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        
+        // reverse second half
+        ListNode prev = null;
+        ListNode curr = slow;
+        while (curr != null) {
+            ListNode temp = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = temp;
+        }
+        
+        // merge
+        ListNode first = head;
+        ListNode second = prev;
+        // 循环截止时，second指向后半段最后一个节点，最终结果最后一个节点为前半段的最后一个节点
+        while (second.next != null) {
+            ListNode temp = first.next;
+            first.next = second;
+            first = temp;
+            
+            temp = second.next;
+            second.next = first;
+            second = temp;
+        }
+    }
+  }
+  ```
+  - Time complexity: O(N). There are three steps here. To identify the middle node takes O(N) time. To reverse the second part of the list, one needs N/2 operations. The final step, to merge two lists, requires N/2 operations as well. In total, that results in O(N) time complexity.
+  - Space complexity: O(1), since we do not allocate any additional data structures.
+
+### 1.7 Sort
+- [148. Sort List](https://leetcode.com/problems/sort-list/)
+  > 
