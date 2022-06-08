@@ -79,3 +79,137 @@
   - Recursive 
     - Time Complexity: O(N) since we process all the nodes at-most twice. Once during the normal recursion process and once during the backtracking process. During the       backtracking process we only just swap half of the list if you think about it, but the overall complexity is O(N).
     - Space Complexity: O(N) in the worst case when we have to reverse the entire list. This is the space occupied by the recursion stack.
+
+### 1.2 Cycle
+- [141. Linked List Cycle](https://leetcode.com/problems/linked-list-cycle/)
+  > Hash Table
+
+  ```java
+  public class Solution {
+      public boolean hasCycle(ListNode head) {
+          Set<ListNode> nodesSeen = new HashSet<>();
+
+          while (head != null) {
+              if (nodesSeen.contains(head)) return true;
+              nodesSeen.add(head);
+              head = head.next;
+          }
+
+          return false;
+      }
+  }
+  ```
+  
+  - Time complexity : O(n). We visit each of the n elements in the list at most once. Adding a node to the hash table costs only O(1) time.
+  - Space complexity: O(n). The space depends on the number of elements added to the hash table, which contains at most n elements.
+
+- [142. Linked List Cycle II](https://leetcode.com/problems/linked-list-cycle-ii/)
+  > Floyd's Tortoise and Hare
+
+  ```java
+  public class Solution {
+    public ListNode getIntersect(ListNode head) {
+        ListNode slow = head;
+        ListNode fast = head;
+        
+        // stop at the end node
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+            if (slow == fast) {
+                return slow;
+            }
+        }
+        
+        return null;
+    }
+    
+    public ListNode detectCycle(ListNode head) {
+        if (head == null) return null;
+        
+        ListNode intersect = getIntersect(head);
+        if (intersect == null) return null;
+        
+        ListNode ptr1 = head;
+        ListNode ptr2 = intersect;
+        
+        while (ptr1 != ptr2) {
+            ptr1 = ptr1.next;
+            ptr2 = ptr2.next;
+        }
+        
+        return ptr1;
+    }
+  }
+  ```
+  
+  - Time complexity : O(n).
+  - Space complexity : O(1). Floyd's Tortoise and Hare algorithm allocates only pointers, so it runs with constant overall memory usage.
+
+### 1.3 Remove
+- [83. Remove Duplicates from Sorted List](https://leetcode.com/problems/remove-duplicates-from-sorted-list/)
+  > Straight-Forward  
+  > **Notice: curr.next = curr.next.next;**
+
+  ```java
+  class Solution {
+    public ListNode deleteDuplicates(ListNode head) {
+        ListNode curr = head;
+        
+        while (curr != null && curr.next != null) {
+            if (curr.val == curr.next.val) {
+                curr.next = curr.next.next;
+            }
+            else {
+                curr = curr.next;
+            }
+        }
+        
+        return head;
+    }
+  }
+  ```
+  
+  - Time complexity : O(n). Because each node in the list is checked exactly once to determine if it is a duplicate or not, the total run time is O(n), where nn is the number of nodes in the list.
+  - Space complexity : O(1). No additional space is used.
+
+- [203. Remove Linked List Elements](https://leetcode.com/problems/remove-linked-list-elements/)
+  > Sentinel Node  
+  > Why use: 中间的好删除，两头不好删。  
+  > **Notice: return sentinel.next;**  
+  > Sentinel nodes are widely used in trees and linked lists as pseudo-heads, pseudo-tails, markers of level end, etc. They are purely functional, and usually does  not hold any data. Their main purpose is to standardize the situation, for example, make linked list to be never empty and never headless and hence simplify   insert and delete.
+
+  ```java
+  class Solution {
+    public ListNode removeElements(ListNode head, int val) {
+        ListNode sentinel = new ListNode(0);
+        sentinel.next = head;
+        
+        ListNode prev = sentinel, curr = head;
+        while (curr != null) {
+            if (curr.val == val) {
+                prev.next = curr.next;
+            }
+            else {
+                prev = curr;
+            }
+            curr = curr.next;
+        }
+        
+        return sentinel.next;
+    }
+  }
+  ```
+  
+  - Time complexity: O(N), it's one pass solution.
+  - Space complexity: O(1), it's a constant space solution.
+
+- [237. Delete Node in a Linked List](https://leetcode.com/problems/delete-node-in-a-linked-list/)
+  ```java
+  class Solution {
+    public void deleteNode(ListNode node) {
+        node.val = node.next.val;
+        node.next = node.next.next;
+    }
+  }
+  ```
