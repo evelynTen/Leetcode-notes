@@ -1,5 +1,5 @@
 # Content
-## 1 Basic Operations
+## 1 Basic Operation
 ### 1.1 Reverse
 - [206. Reverse Linked List](https://leetcode.com/problems/reverse-linked-list/)
   > **Iterative:**  
@@ -558,7 +558,7 @@
   **Note, we did not create new nodes to hold the values of input list, but simply reorder the existing nodes.**
   
 ### 1.8 Partition/Split
-- [86. Partition List](https://leetcode.com/problems/partition-list/)
+- <a id="no.86"></a>[86. Partition List](https://leetcode.com/problems/partition-list/)
   > Two Pointer Approach  
   > **Notice: 注意before_head, before, after_head, after四个节点指向哪里。**
 
@@ -635,7 +635,7 @@
   - Space Complexity: O(max(N, k)), the space used in writing the answer.
 
 - [328. Odd Even Linked List](https://leetcode.com/problems/odd-even-linked-list/)
-  > 跟86题很像
+  > 跟[86题](#no.86)差不多
 
   ```java
   class Solution {
@@ -770,3 +770,122 @@
   - Time Complexity : O(N) where N is the size of the linked list.
   - Space Complexity : O(1).
 
+### 1.12 Design Linked List
+- [707. Design Linked List](https://leetcode.com/problems/design-linked-list/)
+
+  ```java
+    public class ListNode {
+      int val;
+      ListNode next;
+      ListNode(int x) {
+          val = x;
+      }
+  }
+
+  class MyLinkedList {
+
+      int size;
+      ListNode head;
+
+
+      public MyLinkedList() {
+          size = 0;
+          head = new ListNode(0);
+      }
+
+      public int get(int index) {
+          if (index < 0 || index >= size) return -1;
+
+          ListNode curr = head;
+          for (int i = 0; i < index + 1; i++) {
+              curr = curr.next;
+          }
+          return curr.val;
+      }
+
+      public void addAtHead(int val) {
+          addAtIndex(0, val);
+      }
+
+      public void addAtTail(int val) {
+          addAtIndex(size, val);
+      }
+
+      public void addAtIndex(int index, int val) {
+          if (index > size) return;
+
+          if (index < 0) index = 0;
+
+          size++;
+
+          ListNode pred = head;
+          for (int i = 0; i < index; i++) {
+              pred = pred.next;
+          }
+
+          ListNode toAdd = new ListNode(val);
+          toAdd.next = pred.next;
+          pred.next = toAdd;
+      }
+
+      public void deleteAtIndex(int index) {
+
+          if (index < 0 || index >= size) return;
+
+          size--;
+
+          ListNode pred = head;
+          for (int i = 0; i < index; i++) {
+              pred = pred.next;
+          }
+          pred.next = pred.next.next;
+       }
+  }
+  ```
+  - Time complexity: O(1) for addAtHead and addAtTail. O(min(k,N−k)) for get, addAtIndex, and deleteAtIndex, where k is an index of the element to get, add or delete.
+  - Space complexity: O(1) for all operations.
+
+## 2 Advance Operation
+- [109. Convert Sorted List to Binary Search Tree](https://leetcode.com/problems/convert-sorted-list-to-binary-search-tree/)
+  > Recursion
+  > 1. 找到中间节点
+  > 2. 迭代找每半截的中点
+
+  ```java
+  class Solution {
+    
+    private ListNode findMiddleElement(ListNode head) {
+        ListNode prevPtr = null;
+        ListNode slowPtr = head;
+        ListNode fastPtr = head;
+
+        while (fastPtr != null && fastPtr.next != null) {
+          prevPtr = slowPtr;
+          slowPtr = slowPtr.next;
+          fastPtr = fastPtr.next.next;
+        }
+
+        if (prevPtr != null) {
+          prevPtr.next = null;
+        }
+
+        return slowPtr;
+    }
+    
+    public TreeNode sortedListToBST(ListNode head) {
+        if (head == null) return null;
+        
+        ListNode mid = this.findMiddleElement(head);
+        
+        TreeNode node = new TreeNode(mid.val);
+        
+        if (head == mid) return node;
+        
+        node.left = this.sortedListToBST(head);
+        node.right = this.sortedListToBST(mid.next);
+        return node;
+    }
+  }
+  ```
+  - Time Complexity: O(NlogN). Suppose our linked list consists of N elements. O(N) to find the mid. Essentially, this is done logN times since we split the linked list in half every time. 
+  - Space Complexity: O(logN). Since we are resorting to recursion, there is always the added space complexity of the recursion stack that comes into picture.
